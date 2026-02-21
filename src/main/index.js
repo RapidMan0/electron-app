@@ -52,6 +52,44 @@ app.whenReady().then(() => {
   // IPC test
   ipcMain.on('ping', () => console.log('pong'))
 
+  // Search by URL
+  ipcMain.handle('search-by-url', async (event, url) => {
+    try {
+      const endpoint = `https://api.trace.moe/search?anilistInfo=1&url=${encodeURIComponent(url)}`
+      const res = await fetch(endpoint)
+      if (!res.ok) {
+        const text = await res.text().catch(() => '')
+        throw new Error(`HTTP ${res.status} ${text}`)
+      }
+      const data = await res.json()
+      return data
+    } catch (error) {
+      throw error
+    }
+  })
+
+  // Search by file
+  ipcMain.handle('search-by-file', async (event, fileBuffer, fileName) => {
+    try {
+      const form = new FormData()
+      const blob = new Blob([fileBuffer], { type: 'image/jpeg' })
+      form.append('image', blob, fileName)
+
+      const res = await fetch('https://api.trace.moe/search?anilistInfo=1', {
+        method: 'POST',
+        body: form
+      })
+      if (!res.ok) {
+        const text = await res.text().catch(() => '')
+        throw new Error(`HTTP ${res.status} ${text}`)
+      }
+      const data = await res.json()
+      return data
+    } catch (error) {
+      throw error
+    }
+  })
+
   createWindow()
 
   app.on('activate', function () {

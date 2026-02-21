@@ -17,6 +17,7 @@ export default function TraceSearch() {
   const [loading, setLoading] = useState(false)
   const [results, setResults] = useState([])
   const [error, setError] = useState(null)
+  const [previewImage, setPreviewImage] = useState(null)
 
   const featured = results && results.length > 0 ? results[0] : null
 
@@ -26,19 +27,8 @@ export default function TraceSearch() {
     setError(null)
     setResults([])
     try {
-      const endpoint = `https://api.trace.moe/search?anilistInfo=1&url=${encodeURIComponent(url)}`
-      console.log('TraceSearch: searchByUrl ->', endpoint)
-      const res = await fetch(endpoint)
-      if (!res.ok) {
-        const text = await res.text().catch(() => '')
-        throw new Error(`HTTP ${res.status} ${text}`)
-      }
-      let data
-      try {
-        data = await res.json()
-      } catch (pe) {
-        throw new Error('Failed to parse JSON response: ' + pe.message)
-      }
+      console.log('TraceSearch: searchByUrl ->', url)
+      const data = await window.api.searchByUrl(url)
       console.log('TraceSearch: searchByUrl result', data)
       setResults(data.result || [])
     } catch (e) {
@@ -55,23 +45,14 @@ export default function TraceSearch() {
     setError(null)
     setResults([])
     try {
-      const form = new FormData()
-      form.append('image', file)
+      // Create preview
+      const reader = new FileReader()
+      reader.onload = (e) => setPreviewImage(e.target.result)
+      reader.readAsDataURL(file)
+      
       console.log('TraceSearch: searchByFile ->', file.name, file.type, file.size)
-      const res = await fetch('https://api.trace.moe/search?anilistInfo=1', {
-        method: 'POST',
-        body: form
-      })
-      if (!res.ok) {
-        const text = await res.text().catch(() => '')
-        throw new Error(`HTTP ${res.status} ${text}`)
-      }
-      let data
-      try {
-        data = await res.json()
-      } catch (pe) {
-        throw new Error('Failed to parse JSON response: ' + pe.message)
-      }
+      const buffer = await file.arrayBuffer()
+      const data = await window.api.searchByFile(buffer, file.name)
       console.log('TraceSearch: searchByFile result', data)
       setResults(data.result || [])
     } catch (e) {
@@ -131,6 +112,21 @@ export default function TraceSearch() {
             <p className="ant-upload-text">Click or drag image to this area to upload</p>
           </Dragger>
 
+          {previewImage && (
+            <div style={{ width: '100%', marginTop: 16, textAlign: 'center' }}>
+              <Text style={{ display: 'block', marginBottom: 12, color: '#666' }}>Your search image</Text>
+              <div style={{
+                display: 'inline-block',
+                maxWidth: '100%',
+                borderRadius: 8,
+                boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                overflow: 'hidden'
+              }}>
+                <img src={previewImage} alt="search preview" style={{ maxWidth: 400, height: 'auto', display: 'block' }} />
+              </div>
+            </div>
+          )}
+
           {loading && (
             <div style={{ textAlign: 'center', padding: 12 }}>
               <Spin />
@@ -138,91 +134,9 @@ export default function TraceSearch() {
           )}
 
           {error && <Alert type="error" title="Error" description={error} />}
-          {featured && (
-            <div style={{ width: '100%', marginTop: 8 }}>
-              <div
-                style={{
-                  display: 'flex',
-                  gap: 16,
-                  background: '#ffffff',
-                  color: '#111827',
-                  padding: 16,
-                  borderRadius: 8,
-                  alignItems: 'flex-start',
-                  boxShadow: '0 6px 18px rgba(15,23,42,0.06)',
-                  border: '1px solid rgba(0,0,0,0.04)'
-                }}
-              >
-                <div style={{ flex: '1 1 auto' }}>
-                  <div style={{ fontSize: 20, fontWeight: 700, marginBottom: 6, color: '#0f1720' }}>
-                    {featured.anilist
-                      ? featured.anilist.title.english ||
-                        featured.anilist.title.romaji ||
-                        featured.anilist.title.native
-                      : 'Unknown'}
-                  </div>
-                  <div style={{ color: '#6b7280', marginBottom: 8 }}>
-                    Episode: {featured.episode ?? '-'} • Similarity:{' '}
-                    {(featured.similarity * 100).toFixed(2)}%
-                  </div>
-
-                  {featured.anilist && featured.anilist.description && (
-                    <div
-                      style={{
-                        color: '#374151',
-                        marginTop: 8,
-                        lineHeight: 1.4,
-                        maxHeight: 140,
-                        overflow: 'auto'
-                      }}
-                      dangerouslySetInnerHTML={{ __html: featured.anilist.description }}
-                    />
-                  )}
-
-                  <div
-                    style={{
-                      marginTop: 12,
-                      display: 'grid',
-                      gridTemplateColumns: '120px 1fr',
-                      rowGap: 8,
-                      columnGap: 12,
-                      alignItems: 'start'
-                    }}
-                  >
-                    <div style={{ color: '#6b7280', fontSize: 13, fontWeight: 700 }}>Alias</div>
-                    <div style={{ color: '#111827', fontSize: 13 }}>
-                      {featured.anilist && featured.anilist.synonyms && featured.anilist.synonyms.length > 0
-                        ? featured.anilist.synonyms.join(', ')
-                        : '-'}
-                    </div>
-
-                    <div style={{ color: '#6b7280', fontSize: 13, fontWeight: 700 }}>Genre</div>
-                    <div style={{ color: '#111827', fontSize: 13 }}>
-                      {featured.anilist && featured.anilist.genres && featured.anilist.genres.length > 0
-                        ? featured.anilist.genres.join(', ')
-                        : '-'}
-                    </div>
-                  </div>
-                </div>
-
-                <div style={{ width: 220, flex: '0 0 220px' }}>
-                  <Image
-                    src={featured.anilist?.coverImage?.large || featured.image}
-                    style={{
-                      width: '100%',
-                      height: 'auto',
-                      borderRadius: 6,
-                      boxShadow: '0 4px 12px rgba(2,6,23,0.08)',
-                      background: '#f8fafc'
-                    }}
-                  />
-                </div>
-              </div>
-            </div>
-          )}
-          {results && results.length > 1 && (
+          {results && results.length > 0 && (
             <div style={{ width: '100%', overflow: 'auto', marginTop: 12 }}>
-              {results.slice(1, 10).map((item, idx) => (
+              {results.map((item, idx) => (
                 <div key={idx} style={{ padding: 12, borderBottom: '1px solid #f0f0f0' }}>
                   <div style={{ display: 'flex', gap: 12 }}>
                     <div style={{ flex: '0 0 120px' }}>
