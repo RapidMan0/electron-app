@@ -124,6 +124,26 @@ export default function TraceSearch() {
               }}>
                 <img src={previewImage} alt="search preview" style={{ maxWidth: 400, height: 'auto', display: 'block' }} />
               </div>
+              
+              {results && results.length > 0 && results[0].anilist && (
+                <div style={{
+                  marginTop: 12,
+                  padding: 12,
+                  background: '#f5f5f5',
+                  borderRadius: 6,
+                  textAlign: 'left',
+                  maxWidth: 400,
+                  margin: '12px auto 0'
+                }}>
+                  <div style={{ fontWeight: 600, fontSize: 16, marginBottom: 8, color: '#0f1720' }}>
+                    {results[0].anilist.title.english || results[0].anilist.title.romaji || results[0].anilist.title.native}
+                  </div>
+                  <div style={{ fontSize: 14, color: '#666', lineHeight: 1.6 }}>
+                    <div>Episode: {results[0].episode ?? '-'}</div>
+                    <div>Similarity: {(results[0].similarity * 100).toFixed(2)}%</div>
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
