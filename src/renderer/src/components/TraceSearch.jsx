@@ -69,7 +69,7 @@ export default function TraceSearch() {
       const reader = new FileReader()
       reader.onload = (e) => setPreviewImage(e.target.result)
       reader.readAsDataURL(file)
-      
+
       console.log('TraceSearch: searchByFile ->', file.name, file.type, file.size)
       const buffer = await file.arrayBuffer()
       const data = await window.api.searchByFile(buffer, file.name)
@@ -134,29 +134,41 @@ export default function TraceSearch() {
 
           {previewImage && (
             <div style={{ width: '100%', marginTop: 16, textAlign: 'center' }}>
-              <Text style={{ display: 'block', marginBottom: 12, color: '#666' }}>Your search image</Text>
-              <div style={{
-                display: 'inline-block',
-                maxWidth: '100%',
-                borderRadius: 8,
-                boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-                overflow: 'hidden'
-              }}>
-                <img src={previewImage} alt="search preview" style={{ maxWidth: 400, height: 'auto', display: 'block' }} />
+              <Text style={{ display: 'block', marginBottom: 12, color: '#666' }}>
+                Your search image
+              </Text>
+              <div
+                style={{
+                  display: 'inline-block',
+                  maxWidth: '100%',
+                  borderRadius: 8,
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                  overflow: 'hidden'
+                }}
+              >
+                <img
+                  src={previewImage}
+                  alt="search preview"
+                  style={{ maxWidth: 400, height: 'auto', display: 'block' }}
+                />
               </div>
-              
+
               {results && results.length > 0 && results[0].anilist && (
-                <div style={{
-                  marginTop: 12,
-                  padding: 12,
-                  background: '#f5f5f5',
-                  borderRadius: 6,
-                  textAlign: 'left',
-                  maxWidth: 400,
-                  margin: '12px auto 0'
-                }}>
+                <div
+                  style={{
+                    marginTop: 12,
+                    padding: 12,
+                    background: '#f5f5f5',
+                    borderRadius: 6,
+                    textAlign: 'left',
+                    maxWidth: 400,
+                    margin: '12px auto 0'
+                  }}
+                >
                   <div style={{ fontWeight: 600, fontSize: 16, marginBottom: 8, color: '#0f1720' }}>
-                    {results[0].anilist.title.english || results[0].anilist.title.romaji || results[0].anilist.title.native}
+                    {results[0].anilist.title.english ||
+                      results[0].anilist.title.romaji ||
+                      results[0].anilist.title.native}
                   </div>
                   <div style={{ fontSize: 14, color: '#666', lineHeight: 1.6 }}>
                     <div>Episode: {results[0].episode ?? '-'}</div>

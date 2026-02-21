@@ -5,7 +5,7 @@ import 'antd/dist/reset.css'
 import { Layout, Row, Col, Button, Space, Typography } from 'antd'
 import { SearchOutlined, LinkOutlined } from '@ant-design/icons'
 
-const { Header, Content, Footer } = Layout
+const { Header, Content } = Layout
 const { Title, Text } = Typography
 
 function App() {
@@ -14,29 +14,29 @@ function App() {
       <Header
         className="app-header"
         style={{
-          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          background: '#1a1a2e',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+          boxShadow: '0 2px 8px rgba(0,0,0,0.15)'
         }}
       >
         <div
           className="app-header-left"
           style={{ display: 'flex', alignItems: 'center', gap: 12, minWidth: 0 }}
         >
-          <div style={{ fontSize: 24, color: '#fff' }}>
+          <div style={{ fontSize: 24, color: '#e2e8f0' }}>
             <SearchOutlined />
           </div>
           <div style={{ minWidth: 0 }}>
             <Title
               level={4}
               className="app-title"
-              style={{ margin: 0, lineHeight: 1, fontWeight: 700, color: '#fff' }}
+              style={{ margin: 0, lineHeight: 1, fontWeight: 700, color: '#e2e8f0' }}
             >
               TraceFinder
             </Title>
-            <Text className="app-subtitle" style={{ color: 'rgba(255,255,255,0.8)', fontSize: 12 }}>
+            <Text className="app-subtitle" style={{ color: 'rgba(226,232,240,0.6)', fontSize: 12 }}>
               Identify anime scenes in seconds
             </Text>
           </div>
@@ -49,7 +49,7 @@ function App() {
             href="https://trace.moe" 
             target="_blank" 
             rel="noreferrer"
-            style={{ color: '#fff', fontWeight: 500 }}
+            style={{ color: '#e2e8f0', fontWeight: 500 }}
           >
             trace.moe
           </Button>
@@ -64,9 +64,6 @@ function App() {
         </Row>
       </Content>
 
-      <Footer style={{ textAlign: 'center', background: '#fff', color: '#666', marginTop: 'auto' }}>
-        TraceFinder © 2026 • Powered by <a href="https://trace.moe" target="_blank" rel="noreferrer" style={{ color: '#667eea' }}>trace.moe</a>
-      </Footer>
     </Layout>
   )
 }
