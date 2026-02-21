@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Upload, Input, Button, Card, Image, Typography, Progress, Alert, Space, Spin } from 'antd'
 import { InboxOutlined, SearchOutlined, UploadOutlined } from '@ant-design/icons'
 
@@ -20,6 +20,26 @@ export default function TraceSearch() {
   const [previewImage, setPreviewImage] = useState(null)
 
   const featured = results && results.length > 0 ? results[0] : null
+
+  // Handle paste event
+  useEffect(() => {
+    const handlePaste = (e) => {
+      const items = e.clipboardData?.items
+      if (!items) return
+
+      for (let item of items) {
+        if (item.type.indexOf('image') === 0) {
+          const file = item.getAsFile()
+          if (file) {
+            searchByFile(file)
+          }
+        }
+      }
+    }
+
+    window.addEventListener('paste', handlePaste)
+    return () => window.removeEventListener('paste', handlePaste)
+  }, [])
 
   async function searchByUrl(url) {
     if (!url) return

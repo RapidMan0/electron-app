@@ -40,7 +40,6 @@ code {
   position: sticky;
   top: 0;
   z-index: 40;
-  backdrop-filter: blur(6px);
   /* ensure header contents don't push outside */
   overflow: hidden;
   align-items: center;
