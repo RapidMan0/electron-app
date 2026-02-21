@@ -177,38 +177,38 @@ export default function TraceSearch() {
           {results && results.length > 0 && (
             <div style={{ width: '100%', overflow: 'auto', marginTop: 12 }}>
               {results.map((item, idx) => (
-                <div key={idx} style={{ padding: 12, borderBottom: '1px solid #f0f0f0' }}>
-                  <div style={{ display: 'flex', gap: 12 }}>
-                    <div style={{ flex: '0 0 120px' }}>
+                <div key={idx} style={{ padding: 20, borderBottom: '1px solid #f0f0f0' }}>
+                  <div style={{ display: 'flex', gap: 20 }}>
+                    <div style={{ flex: '0 0 160px' }}>
                       <Image
                         src={item.image}
                         style={{
-                          maxWidth: 120,
+                          maxWidth: 160,
                           width: '100%',
                           height: 'auto',
                           objectFit: 'cover',
-                          borderRadius: 4
+                          borderRadius: 6
                         }}
                       />
                     </div>
                     <div style={{ flex: '1 1 auto' }}>
                       <div style={{ wordBreak: 'break-word' }}>
-                        <Text strong>
+                        <Text strong style={{ fontSize: 16 }}>
                           {item.anilist
                             ? item.anilist.title.english ||
                               item.anilist.title.romaji ||
                               item.anilist.title.native
                             : 'Unknown'}
                         </Text>
-                        <div style={{ fontSize: 12, color: '#888' }}>
+                        <div style={{ fontSize: 14, color: '#888', marginTop: 4 }}>
                           Episode: {item.episode ?? '-'} • Similarity:{' '}
                           {(item.similarity * 100).toFixed(2)}%
                         </div>
                       </div>
-                      <div style={{ wordBreak: 'break-word', marginTop: 6 }}>
+                      <div style={{ wordBreak: 'break-word', marginTop: 10, fontSize: 14 }}>
                         At: {formatTime(item.from)} • From: {item.filename ?? '-'}
                       </div>
-                      <div style={{ marginTop: 8 }}>
+                      <div style={{ marginTop: 12 }}>
                         <Progress
                           percent={Math.round(item.similarity * 100)}
                           status={item.similarity > 0.7 ? 'success' : 'normal'}
