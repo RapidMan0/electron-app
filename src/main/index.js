@@ -1,7 +1,15 @@
-import { app, shell, BrowserWindow, ipcMain } from 'electron'
+import { app, shell, BrowserWindow, ipcMain, nativeImage } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
+
+// Использовать файл .ico для Windows, png для других платформ
+const iconPath =
+  process.platform === 'win32'
+    ? join(__dirname, '../../resources/icon.ico') // <-- поместите сюда .ico для Windows
+    : join(__dirname, '../../resources/icon.png')
+
+const appIcon = nativeImage.createFromPath(iconPath)
 
 function createWindow() {
   // Create the browser window.
@@ -10,7 +18,7 @@ function createWindow() {
     height: 670,
     show: false,
     autoHideMenuBar: true,
-    ...(process.platform === 'linux' ? { icon } : {}),
+    icon: appIcon, // <- Передаём иконку для всех платформ
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
       sandbox: false
