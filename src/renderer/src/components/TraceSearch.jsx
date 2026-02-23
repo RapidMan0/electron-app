@@ -106,6 +106,7 @@ export default function TraceSearch() {
   const ResultPanel = ({ item }) => {
     const title =
       item?.anilist?.title?.english || item?.anilist?.title?.romaji || item?.anilist?.title?.native || 'Unknown'
+    const engTitle = item?.anilist?.title?.english
 
     return (
       <div
@@ -156,12 +157,27 @@ export default function TraceSearch() {
             >
               Open
             </Button>
+
             <Button
               size="middle"
               icon={<CopyOutlined />}
               onClick={() => copyToClipboard(item.image)}
             >
               Copy image URL
+            </Button>
+
+            <Button
+              size="middle"
+              icon={<SearchOutlined />}
+              onClick={() => {
+                // Open Google search using the English title (engTitle)
+                const query = engTitle || ''
+                if (query) {
+                  window.open(`https://www.google.com/search?q=${encodeURIComponent(query)}`, '_blank')
+                }
+              }}
+            >
+              Google
             </Button>
           </div>
         </div>
