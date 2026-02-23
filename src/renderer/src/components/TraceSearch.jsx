@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import { Upload, Input, Button, Card, Image, Typography, Progress, Alert, Space, Spin } from 'antd'
-import { InboxOutlined, SearchOutlined, UploadOutlined } from '@ant-design/icons'
+import { Upload, Input, Button, Card, Image, Typography, Progress, Alert, Space, Spin, Tag } from 'antd'
+import { InboxOutlined, SearchOutlined, UploadOutlined, LinkOutlined, CopyOutlined } from '@ant-design/icons'
 
 const { Dragger } = Upload
 const { Text, Title } = Typography
@@ -91,6 +91,82 @@ export default function TraceSearch() {
       // We handle upload manually, call searchByFile
       searchByFile(file).then(() => onSuccess && onSuccess(null))
     }
+  }
+
+  // helper to copy text to clipboard (minimal feedback)
+  const copyToClipboard = async (text) => {
+    try {
+      await navigator.clipboard.writeText(text || '')
+    } catch (e) {
+      console.error('copy failed', e)
+    }
+  }
+
+  // Render a single "panel" for one result (no duplication)
+  const ResultPanel = ({ item }) => {
+    const title =
+      item?.anilist?.title?.english || item?.anilist?.title?.romaji || item?.anilist?.title?.native || 'Unknown'
+
+    return (
+      <div
+        style={{
+          width: '100%',
+          borderRadius: 8,
+          padding: 12,
+          background: '#fff',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
+          display: 'flex',
+          gap: 12,
+          alignItems: 'center'
+        }}
+      >
+        <div style={{ flex: '0 0 120px' }}>
+          <Image src={item.image} width={120} height={84} style={{ objectFit: 'cover', borderRadius: 6 }} />
+        </div>
+
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
+            <div style={{ minWidth: 0 }}>
+              <Text strong style={{ fontSize: 15, display: 'block', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                {title}
+              </Text>
+              <div style={{ fontSize: 13, color: '#666', marginTop: 6 }}>
+                Episode: {item.episode ?? '-'} • At: {formatTime(item.from)} • From: {item.filename ?? '-'}
+              </div>
+            </div>
+
+            <div style={{ textAlign: 'right' }}>
+              <Tag color={item.similarity > 0.8 ? 'green' : item.similarity > 0.6 ? 'gold' : 'default'}>
+                {(item.similarity * 100).toFixed(1)}%
+              </Tag>
+              <div style={{ marginTop: 8, width: 120 }}>
+                <Progress percent={Math.round(item.similarity * 100)} size="small" status={item.similarity > 0.7 ? 'success' : 'normal'} />
+              </div>
+            </div>
+          </div>
+
+          <div style={{ display: 'flex', gap: 8, marginTop: 10 }}>
+            <Button
+              size="small"
+              icon={<LinkOutlined />}
+              onClick={() => {
+                if (item.video) window.open(item.video, '_blank')
+                else window.open(item.image, '_blank')
+              }}
+            >
+              Open
+            </Button>
+            <Button
+              size="small"
+              icon={<CopyOutlined />}
+              onClick={() => copyToClipboard(item.image)}
+            >
+              Copy image URL
+            </Button>
+          </div>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -189,45 +265,9 @@ export default function TraceSearch() {
           {results && results.length > 0 && (
             <div style={{ width: '100%', overflow: 'auto', marginTop: 12 }}>
               {results.map((item, idx) => (
-                <div key={idx} style={{ padding: 20, borderBottom: '1px solid #f0f0f0' }}>
-                  <div style={{ display: 'flex', gap: 20 }}>
-                    <div style={{ flex: '0 0 160px' }}>
-                      <Image
-                        src={item.image}
-                        style={{
-                          maxWidth: 160,
-                          width: '100%',
-                          height: 'auto',
-                          objectFit: 'cover',
-                          borderRadius: 6
-                        }}
-                      />
-                    </div>
-                    <div style={{ flex: '1 1 auto' }}>
-                      <div style={{ wordBreak: 'break-word' }}>
-                        <Text strong style={{ fontSize: 16 }}>
-                          {item.anilist
-                            ? item.anilist.title.english ||
-                              item.anilist.title.romaji ||
-                              item.anilist.title.native
-                            : 'Unknown'}
-                        </Text>
-                        <div style={{ fontSize: 14, color: '#888', marginTop: 4 }}>
-                          Episode: {item.episode ?? '-'} • Similarity:{' '}
-                          {(item.similarity * 100).toFixed(2)}%
-                        </div>
-                      </div>
-                      <div style={{ wordBreak: 'break-word', marginTop: 10, fontSize: 14 }}>
-                        At: {formatTime(item.from)} • From: {item.filename ?? '-'}
-                      </div>
-                      <div style={{ marginTop: 12 }}>
-                        <Progress
-                          percent={Math.round(item.similarity * 100)}
-                          status={item.similarity > 0.7 ? 'success' : 'normal'}
-                        />
-                      </div>
-                    </div>
-                  </div>
+                <div key={idx} style={{ padding: 16, borderBottom: '1px solid #f0f0f0' }}>
+                  {/* Одна карточка результата (без дублирования) */}
+                  <ResultPanel item={item} />
                 </div>
               ))}
             </div>
