@@ -102,7 +102,7 @@ export default function TraceSearch() {
     }
   }
 
-  // Render a single "panel" for one result (no duplication)
+  // Render a single "panel" for one result (no duplication) — made larger
   const ResultPanel = ({ item }) => {
     const title =
       item?.anilist?.title?.english || item?.anilist?.title?.romaji || item?.anilist?.title?.native || 'Unknown'
@@ -111,43 +111,43 @@ export default function TraceSearch() {
       <div
         style={{
           width: '100%',
-          borderRadius: 8,
-          padding: 12,
+          borderRadius: 10,
+          padding: 20,
           background: '#fff',
-          boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
+          boxShadow: '0 6px 18px rgba(0,0,0,0.06)',
           display: 'flex',
-          gap: 12,
+          gap: 16,
           alignItems: 'center'
         }}
       >
-        <div style={{ flex: '0 0 120px' }}>
-          <Image src={item.image} width={120} height={84} style={{ objectFit: 'cover', borderRadius: 6 }} />
+        <div style={{ flex: '0 0 160px' }}>
+          <Image src={item.image} width={160} height={110} style={{ objectFit: 'cover', borderRadius: 8 }} />
         </div>
 
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
             <div style={{ minWidth: 0 }}>
-              <Text strong style={{ fontSize: 15, display: 'block', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              <Text strong style={{ fontSize: 17, display: 'block', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                 {title}
               </Text>
-              <div style={{ fontSize: 13, color: '#666', marginTop: 6 }}>
+              <div style={{ fontSize: 14, color: '#666', marginTop: 8 }}>
                 Episode: {item.episode ?? '-'} • At: {formatTime(item.from)} • From: {item.filename ?? '-'}
               </div>
             </div>
 
             <div style={{ textAlign: 'right' }}>
-              <Tag color={item.similarity > 0.8 ? 'green' : item.similarity > 0.6 ? 'gold' : 'default'}>
+              <Tag style={{ fontSize: 14 }} color={item.similarity > 0.8 ? 'green' : item.similarity > 0.6 ? 'gold' : 'default'}>
                 {(item.similarity * 100).toFixed(1)}%
               </Tag>
-              <div style={{ marginTop: 8, width: 120 }}>
+              <div style={{ marginTop: 10, width: 160 }}>
                 <Progress percent={Math.round(item.similarity * 100)} size="small" status={item.similarity > 0.7 ? 'success' : 'normal'} />
               </div>
             </div>
           </div>
 
-          <div style={{ display: 'flex', gap: 8, marginTop: 10 }}>
+          <div style={{ display: 'flex', gap: 10, marginTop: 14 }}>
             <Button
-              size="small"
+              size="middle"
               icon={<LinkOutlined />}
               onClick={() => {
                 if (item.video) window.open(item.video, '_blank')
@@ -157,7 +157,7 @@ export default function TraceSearch() {
               Open
             </Button>
             <Button
-              size="small"
+              size="middle"
               icon={<CopyOutlined />}
               onClick={() => copyToClipboard(item.image)}
             >
@@ -172,24 +172,24 @@ export default function TraceSearch() {
   return (
     <Card
       variant="plain"
-      styles={{ body: { padding: 16, background: 'transparent' } }}
-      style={{ margin: '12px 0', width: '100%' }}
+      styles={{ body: { padding: 20, background: 'transparent' } }}
+      style={{ margin: '16px 0', width: '100%' }}
     >
       <div
         style={{
           width: '100%',
-          maxWidth: 940,
+          maxWidth: 980,
           margin: '0 auto',
           background: '#fff',
-          padding: 16,
-          borderRadius: 8
+          padding: 20,
+          borderRadius: 10
         }}
       >
-        <Title level={4} style={{ marginBottom: 8 }}>
+        <Title level={4} style={{ marginBottom: 10 }}>
           Trace.moe Search
         </Title>
 
-        <Space orientation="vertical" style={{ width: '100%' }} size="middle">
+        <Space orientation="vertical" style={{ width: '100%' }} size="large">
           <Text>
             Paste an image URL or upload an image to search which anime/frame it comes from.
           </Text>
@@ -201,7 +201,7 @@ export default function TraceSearch() {
             allowClear
           />
 
-          <Dragger {...uploadProps} style={{ padding: 12, width: '100%' }} icon={<InboxOutlined />}>
+          <Dragger {...uploadProps} style={{ padding: 14, width: '100%' }} icon={<InboxOutlined />}>
             <p className="ant-upload-drag-icon">
               <UploadOutlined />
             </p>
@@ -209,7 +209,7 @@ export default function TraceSearch() {
           </Dragger>
 
           {previewImage && (
-            <div style={{ width: '100%', marginTop: 16, textAlign: 'center' }}>
+            <div style={{ width: '100%', marginTop: 18, textAlign: 'center' }}>
               <Text style={{ display: 'block', marginBottom: 12, color: '#666' }}>
                 Your search image
               </Text>
@@ -217,36 +217,36 @@ export default function TraceSearch() {
                 style={{
                   display: 'inline-block',
                   maxWidth: '100%',
-                  borderRadius: 8,
-                  boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                  borderRadius: 10,
+                  boxShadow: '0 6px 18px rgba(0,0,0,0.12)',
                   overflow: 'hidden'
                 }}
               >
                 <img
                   src={previewImage}
                   alt="search preview"
-                  style={{ maxWidth: 400, height: 'auto', display: 'block' }}
+                  style={{ maxWidth: 560, height: 'auto', display: 'block' }}
                 />
               </div>
 
               {results && results.length > 0 && results[0].anilist && (
                 <div
                   style={{
-                    marginTop: 12,
-                    padding: 12,
+                    marginTop: 14,
+                    padding: 14,
                     background: '#f5f5f5',
-                    borderRadius: 6,
+                    borderRadius: 8,
                     textAlign: 'left',
-                    maxWidth: 400,
-                    margin: '12px auto 0'
+                    maxWidth: 560,
+                    margin: '14px auto 0'
                   }}
                 >
-                  <div style={{ fontWeight: 600, fontSize: 16, marginBottom: 8, color: '#0f1720' }}>
+                  <div style={{ fontWeight: 700, fontSize: 18, marginBottom: 8, color: '#0f1720' }}>
                     {results[0].anilist.title.english ||
                       results[0].anilist.title.romaji ||
                       results[0].anilist.title.native}
                   </div>
-                  <div style={{ fontSize: 14, color: '#666', lineHeight: 1.6 }}>
+                  <div style={{ fontSize: 15, color: '#666', lineHeight: 1.6 }}>
                     <div>Episode: {results[0].episode ?? '-'}</div>
                     <div>Similarity: {(results[0].similarity * 100).toFixed(2)}%</div>
                   </div>
@@ -256,17 +256,16 @@ export default function TraceSearch() {
           )}
 
           {loading && (
-            <div style={{ textAlign: 'center', padding: 12 }}>
+            <div style={{ textAlign: 'center', padding: 14 }}>
               <Spin />
             </div>
           )}
 
           {error && <Alert type="error" title="Error" description={error} />}
           {results && results.length > 0 && (
-            <div style={{ width: '100%', overflow: 'auto', marginTop: 12 }}>
+            <div style={{ width: '100%', overflow: 'auto', marginTop: 14 }}>
               {results.map((item, idx) => (
-                <div key={idx} style={{ padding: 16, borderBottom: '1px solid #f0f0f0' }}>
-                  {/* Одна карточка результата (без дублирования) */}
+                <div key={idx} style={{ padding: 20, borderBottom: '1px solid #f0f0f0' }}>
                   <ResultPanel item={item} />
                 </div>
               ))}
