@@ -123,11 +123,9 @@ export default function TraceSearch() {
   // Render a single "panel" for one result (no duplication) — made larger
   const ResultPanel = ({ item }) => {
     const title =
-      item?.anilist?.title?.english ||
-      item?.anilist?.title?.romaji ||
-      item?.anilist?.title?.native ||
-      'Unknown'
+      item?.anilist?.title?.english || item?.anilist?.title?.romaji || item?.anilist?.title?.native || 'Unknown'
     const engTitle = item?.anilist?.title?.english
+    const episode = item?.episode
 
     return (
       <div
@@ -143,54 +141,26 @@ export default function TraceSearch() {
         }}
       >
         <div style={{ flex: '0 0 160px' }}>
-          <Image
-            src={item.image}
-            width={160}
-            height={110}
-            style={{ objectFit: 'cover', borderRadius: 8 }}
-          />
+          <Image src={item.image} width={160} height={110} style={{ objectFit: 'cover', borderRadius: 8 }} />
         </div>
 
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              gap: 12
-            }}
-          >
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
             <div style={{ minWidth: 0 }}>
-              <Text
-                strong
-                style={{
-                  fontSize: 17,
-                  display: 'block',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis'
-                }}
-              >
+              <Text strong style={{ fontSize: 17, display: 'block', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                 {title}
               </Text>
               <div style={{ fontSize: 14, color: '#666', marginTop: 8 }}>
-                Episode: {item.episode ?? '-'} • At: {formatTime(item.from)} • From:{' '}
-                {item.filename ?? '-'}
+                Episode: {item.episode ?? '-'} • At: {formatTime(item.from)} • From: {item.filename ?? '-'}
               </div>
             </div>
 
             <div style={{ textAlign: 'right' }}>
-              <Tag
-                style={{ fontSize: 14 }}
-                color={item.similarity > 0.8 ? 'green' : item.similarity > 0.6 ? 'gold' : 'default'}
-              >
+              <Tag style={{ fontSize: 14 }} color={item.similarity > 0.8 ? 'green' : item.similarity > 0.6 ? 'gold' : 'default'}>
                 {(item.similarity * 100).toFixed(1)}%
               </Tag>
               <div style={{ marginTop: 10, width: 160 }}>
-                <Progress
-                  percent={Math.round(item.similarity * 100)}
-                  size="small"
-                  status={item.similarity > 0.7 ? 'success' : 'normal'}
-                />
+                <Progress percent={Math.round(item.similarity * 100)} size="small" status={item.similarity > 0.7 ? 'success' : 'normal'} />
               </div>
             </div>
           </div>
@@ -219,13 +189,12 @@ export default function TraceSearch() {
               size="middle"
               icon={<SearchOutlined />}
               onClick={() => {
-                // Open Google search using the English title (engTitle)
-                const query = engTitle || ''
+                // Open Google search using the English title (engTitle) and episode if available
+                const base = engTitle || title || ''
+                const epPart = episode ? ` episode ${episode}` : ''
+                const query = `${base}${epPart}`.trim()
                 if (query) {
-                  window.open(
-                    `https://www.google.com/search?q=${encodeURIComponent(query)}`,
-                    '_blank'
-                  )
+                  window.open(`https://www.google.com/search?q=${encodeURIComponent(query)}`, '_blank')
                 }
               }}
             >
