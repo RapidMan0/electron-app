@@ -50,7 +50,7 @@ export default function TraceSearch() {
       console.log('TraceSearch: searchByUrl ->', url)
       const data = await window.api.searchByUrl(url)
       console.log('TraceSearch: searchByUrl result', data)
-      setResults(data.result || [])
+      setResults(data.result.slice(0, 3) || []) // Limit to top 3 results
     } catch (e) {
       console.error('TraceSearch: searchByUrl error', e)
       setError(e.message || String(e))
@@ -74,7 +74,7 @@ export default function TraceSearch() {
       const buffer = await file.arrayBuffer()
       const data = await window.api.searchByFile(buffer, file.name)
       console.log('TraceSearch: searchByFile result', data)
-      setResults(data.result || [])
+      setResults(data.result.slice(0, 3) || []) // Limit to top 3 results
     } catch (e) {
       console.error('TraceSearch: searchByFile error', e)
       setError(e.message || String(e))
